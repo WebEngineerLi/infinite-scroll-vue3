@@ -7,7 +7,10 @@
     <div class="infinite-scroll" ref="container" @scroll="handleScroll">
       <!-- 撑开高度 -->
       <!-- :style="{ transform: `translateY(${8400}px)` }" -->
-      <div class="infinite-scroll_runway" :style="{ height: `8400px` }"></div>
+      <div
+        class="infinite-scroll_runway"
+        :style="{ height: `${actualHeight}px` }"
+      ></div>
       <ul
         :style="{
           transform: `translateY(${translateY}px)`,
@@ -95,7 +98,7 @@ export default {
   async mounted() {
     const { clientHeight } = this.$refs.container;
     this.visibleCount = Math.floor(clientHeight / this.estimated_height);
-    await this.getUserList();
+    await this.getUserList(1000);
     this.getVisibleData();
   },
   methods: {
