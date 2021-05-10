@@ -6,8 +6,10 @@
     <div>滚动高度：{{ actualHeight }}</div>
     <div class="infinite-scroll" ref="container" @scroll="handleScroll">
       <!-- 撑开高度 -->
-      <!-- :style="{ transform: `translateY(${8400}px)` }" -->
-      <div class="infinite-scroll_runway" :style="{ height: `8400px` }"></div>
+      <div
+        class="infinite-scroll_runway"
+        :style="{ height: `${actualHeight}px` }"
+      ></div>
       <ul
         :style="{
           transform: `translateY(${translateY}px)`,
@@ -68,13 +70,6 @@ export default {
     },
   },
   setup() {
-    // let itemRefs = ref([]);
-    // const setItemRefs = (el) => {
-    //   if (!itemRefs.value.includes(el)) {
-    //     itemRefs.value.push(el);
-    //   }
-    // };
-
     const userList = ref([]);
     const getUserList = async (count) => {
       userList.value = await fetchData(count);
@@ -88,14 +83,12 @@ export default {
     return {
       userList,
       getUserList,
-      // itemRefs,
-      // setItemRefs,
     };
   },
   async mounted() {
     const { clientHeight } = this.$refs.container;
     this.visibleCount = Math.floor(clientHeight / this.estimated_height);
-    await this.getUserList();
+    await this.getUserList(1000);
     this.getVisibleData();
   },
   methods: {
@@ -154,6 +147,8 @@ export default {
           index--;
         }
         if (index < 0) {
+          // 此时已经滚动到定点了，需要重置 scrollTop
+          this.$refs.container.scrollTop = 0;
           this.anchorItem = {
             index: 0,
             offset: 0,
